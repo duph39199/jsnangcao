@@ -1,0 +1,15 @@
+.container{
+    width: 1440px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.helo{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+}
+.helo b{
+    font-size: 50px;
+}
