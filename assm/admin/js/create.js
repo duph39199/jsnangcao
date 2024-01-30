@@ -8,13 +8,14 @@ const imageElement = document.getElementById("image");
 const descElement = document.getElementById("description");
 const categoryElement = document.getElementById("category");
 const priceElement = document.getElementById("price");
+const API_URL = "http://localhost:3000/products";
 
 // b2: lang nghe submit
 function init() {
   form.addEventListener("submit", handleSubmit);
 }
 
-function handleSubmit(event) {
+async function handleSubmit(event) {
   //b3. ngan chan default
   event.preventDefault();
 
@@ -34,7 +35,11 @@ function handleSubmit(event) {
     price: priceElement.value ? Number(priceElement.value) : 0,
   };
 
-  console.log(newProduct);
-
-  //b6 call api post (api_url, newProduct)
+//b6 call api post (api_url, newProduct)
+  await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify(newProduct),
+  });
+//   tro ve trang chu
+  window.location.replace("./list.html");
 }

@@ -5,9 +5,10 @@ window.addEventListener("DOMContentLoaded", init);
 const form = document.getElementById("form");
 const titleElement = document.getElementById("title");
 const imageElement = document.getElementById("image");
-const descElement = document.getElementById("description");
+const descriptionElement = document.getElementById("description");
 const categoryElement = document.getElementById("category");
 const priceElement = document.getElementById("price");
+const API_URL = "http://localhost:3000/products";
 
 let productId = null;
 
@@ -19,50 +20,67 @@ function init() {
 
 // get ProductId from Url => call APi : getProductDetail +> input value
 
-function getProductDetail() {
+async function getProductDetail() {
   // productId
   //window.location.search
   productId = window.location.search.split("=")[1];
 
   // call APi getProductDetail(productId)
 
-  const productDetail = {
-    title: "title Detail",
-    image: "image Detail",
-    description: "description Detail",
-    category: "1",
-    price: 10,
-  };
+  if (!productId) return;
 
-  // fill info => input value
-  titleElement.value = productDetail.title;
-  imageElement.value = productDetail.image;
-  descElement.value = productDetail.description;
-  categoryElement.value = productDetail.category;
-  priceElement.value = productDetail.price;
+  // call APi getProductDetail(productId)
+
+  try {
+    const apiUrl = `http://localhost:3000/products/${productId}`;
+
+    const res = await fetch(apiUrl);
+
+    const productDetail = await res.json();
+
+    // fill info => input value
+    titleElement.value = productDetail.title;
+    imageElement.value = productDetail.image;
+    descriptionElement.value = productDetail.description;
+    categoryElement.value = productDetail.category;
+    priceElement.value = productDetail.price;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
-function handleSubmit(event) {
-  //b3. ngan chan default
+async function handleSubmit(event) {
+  //b1. ngan chan default
   event.preventDefault();
+  // 2. Lay du lieu input: element.value
+  const title = titleElement.value;
+  const image = imageElement.value;
+  const description = descriptionElement.value;
+  const category = categoryElement.value;
+  const price = priceElement.value;
 
   //b4. validate
-  // requried: title, category, image
-  if (!titleElement.value || !imageElement.value || !categoryElement.value) {
-    alert("Please add title, image, category");
+  // 3. Check validate: if(!value_1 || !value_2)
+  if (!title || !image || !category) {
+    alert("Nhap title, image, category vao");
     return;
   }
 
-  //b5 gom get value input
-  const updateProduct = {
-    title: titleElement.value,
-    image: imageElement.value,
-    description: descElement.value,
-    category: categoryElement.value,
-    price: priceElement.value ? Number(priceElement.value) : 0,
+  const editProduct = {
+    title, // newProduct.title = title
+    image,
+    description,
+    category,
+    price: price ? Number(price) : 0, // chuyen price sang number
   };
+  const apiUrl = `http://localhost:3000/products/${productId}`;
 
-  console.log(updateProduct);
+  await fetch(apiUrl, {
+    method: "PUT",
+    body: JSON.stringify(editProduct),
+  });
+
+  window.location.replace("./list.html");
 
   //b6 call api post (api_url + productId, updateProduct)
 }
